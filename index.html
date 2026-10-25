@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cadence — generative music player</title>
+  <meta name="description" content="Cadence is a music player with no audio files: five original tracks composed and rendered live in your browser with the Web Audio API, complete with a seekable player, visualizer, favourites, shuffle, repeat, and a searchable library.">
+  <meta name="theme-color" content="#0e0b14">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230e0b14'/%3E%3Ccircle cx='12' cy='12' r='7' fill='none' stroke='%23ff7a59' stroke-width='2'/%3E%3Ccircle cx='12' cy='12' r='2' fill='%23ff7a59'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="topbar" id="top">
+    <div class="topbar-inner">
+      <a class="brand" href="#top" aria-label="Cadence, generative music player">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <circle cx="12" cy="12" r="8.5"/>
+            <circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/>
+            <path d="M12 3.5v3M20.5 12h-3M12 20.5v-3M3.5 12h3"/>
+          </svg>
+        </span>
+        <span class="brand-word">Cadence</span>
+        <span class="brand-tag">generative player</span>
+      </a>
+      <div class="topbar-right">
+        <span class="engine-pill"><span class="engine-dot" aria-hidden="true"></span>Web Audio</span>
+        <a class="ghost-link" href="#library">Library</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" id="main">
+    <section class="deck" aria-label="Now playing">
+      <div class="cover-wrap">
+        <div class="cover" id="cover">
+          <div class="cover-glow" aria-hidden="true"></div>
+          <div class="vinyl" aria-hidden="true">
+            <span class="grooves"></span>
+            <span class="label">
+              <span class="label-ring"></span>
+              <span class="label-initial" id="label-initial">N</span>
+            </span>
+            <span class="spindle"></span>
+          </div>
+          <div class="stylus" aria-hidden="true">
+            <span class="stylus-arm"></span>
+            <span class="stylus-head"></span>
+          </div>
+          <span class="cover-genre" id="cover-genre">Synthwave</span>
+          <span class="cover-index" id="cover-index">01 / 05</span>
+        </div>
+        <p class="cover-caption">Cover art is drawn in CSS. Every sound is synthesised at play time.</p>
+      </div>
+
+      <div class="deck-body">
+        <p class="eyebrow"><span class="pulse-dot" id="pulse-dot" aria-hidden="true"></span><span id="eyebrow-text">Ready to play</span></p>
+
+        <div class="title-row">
+          <div>
+            <h1 id="track-title">Neon Drift</h1>
+            <p class="artist-line">by <span id="track-artist">Vela</span></p>
+          </div>
+          <button class="like-btn" id="like-current" type="button" aria-pressed="false" aria-label="Like Neon Drift" title="Like this track">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.4 4.6 13a4.9 4.9 0 0 1 0-6.9 4.9 4.9 0 0 1 6.9 0l.5.5.5-.5a4.9 4.9 0 0 1 6.9 0 4.9 4.9 0 0 1 0 6.9Z"/></svg>
+          </button>
+        </div>
+
+        <ul class="meta-chips" aria-label="Track details">
+          <li id="chip-genre">Synthwave</li>
+          <li id="chip-bpm">100 BPM</li>
+          <li id="chip-key">A minor</li>
+          <li id="chip-length">0:48</li>
+        </ul>
+
+        <p class="description" id="track-description">Neon-lit arpeggios over a patient four-on-the-floor pulse. Built for late drives and empty motorways.</p>
+
+        <div class="viz-wrap">
+          <canvas id="viz" width="880" height="150" role="img" aria-label="Live frequency visualiser. Audio is generated in your browser."></canvas>
+          <div class="viz-hint" id="viz-hint">Audio starts when you press play</div>
+        </div>
+
+        <div class="timeline">
+          <span class="time" id="time-current">0:00</span>
+          <input class="seek" id="seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Seek within track" disabled>
+          <span class="time" id="time-total">0:48</span>
+        </div>
+
+        <div class="transport">
+          <button class="tbtn" id="shuffle" type="button" aria-pressed="false" aria-label="Shuffle" title="Shuffle (S)">
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h3.5c4.5 0 6.5 10 11 10H21"/><path d="M3 17h3.5c1.8 0 3.2-1.6 4.5-3.8M14 7.2C15.1 7 16.2 7 17.5 7H21"/><path d="m18 4 3 3-3 3M18 14l3 3-3 3"/></svg>
+          </button>
+          <button class="tbtn" id="prev" type="button" aria-label="Previous track" title="Previous (P)">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 5.5h2v13h-2z"/><path d="M19 6.4v11.2L9.2 12z"/></svg>
+          </button>
+          <button class="play-btn" id="play" type="button" aria-label="Play" title="Play / pause (Space)">
+            <svg class="ico-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.4v13.2L19.5 12z"/></svg>
+            <svg class="ico-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg>
+            <span class="spinner" aria-hidden="true"></span>
+          </button>
+          <button class="tbtn" id="next" type="button" aria-label="Next track" title="Next (N)">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 5.5h2v13h-2z"/><path d="M5 6.4v11.2L14.8 12z"/></svg>
+          </button>
+          <button class="tbtn" id="repeat" type="button" aria-pressed="false" aria-label="Repeat off" title="Repeat (R)">
+            <svg class="ico-repeat" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3.5 20.5 7 17 10.5"/><path d="M3.5 12V9.5a2.5 2.5 0 0 1 2.5-2.5h14.5"/><path d="M7 20.5 3.5 17 7 13.5"/><path d="M20.5 12v2.5a2.5 2.5 0 0 1-2.5 2.5H3.5"/></svg>
+            <svg class="ico-repeat-one" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3.5 20.5 7 17 10.5"/><path d="M3.5 12V9.5a2.5 2.5 0 0 1 2.5-2.5h14.5"/><path d="M7 20.5 3.5 17 7 13.5"/><path d="M20.5 12v2.5a2.5 2.5 0 0 1-2.5 2.5H3.5"/><path d="M11 10.5h1.5v4" stroke-width="2"/></svg>
+          </button>
+
+          <div class="volume-group">
+            <button class="tbtn" id="mute" type="button" aria-label="Mute" aria-pressed="false" title="Mute (M)">
+              <svg class="ico-vol" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.2L12 5.5v13L7.2 14.5H4z"/><path d="M15.2 9a4.2 4.2 0 0 1 0 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M17.8 6.5a7.7 7.7 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <svg class="ico-muted" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.2L12 5.5v13L7.2 14.5H4z"/><path d="m15.5 9.5 5 5M20.5 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </button>
+            <input class="volume" id="volume" type="range" min="0" max="100" value="78" step="1" aria-label="Volume">
+          </div>
+        </div>
+
+        <div class="deck-foot">
+          <p class="status" id="status" role="status" aria-live="polite">5 original tracks. Nothing is downloaded.</p>
+          <p class="keys"><span><kbd>Space</kbd> play</span><span><kbd>←</kbd><kbd>→</kbd> seek</span><span><kbd>N</kbd> next</span><span><kbd>M</kbd> mute</span></p>
+        </div>
+      </div>
+    </section>
+
+    <aside class="sidebar" aria-label="Playlist">
+      <section class="card library" id="library" aria-labelledby="library-title">
+        <div class="card-head">
+          <h2 id="library-title">Library</h2>
+          <span class="count" id="library-count">5 tracks</span>
+        </div>
+        <div class="search-wrap">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>
+          <input class="search" id="search" type="search" placeholder="Search title, artist, mood…" aria-label="Search tracks" autocomplete="off">
+          <kbd class="search-kbd" aria-hidden="true">/</kbd>
+        </div>
+        <div class="chips" id="chips" role="group" aria-label="Filter by genre">
+          <button class="chip is-on" type="button" data-filter="all" aria-pressed="true">All</button>
+          <button class="chip" type="button" data-filter="liked" aria-pressed="false">Liked</button>
+        </div>
+        <ol class="tracklist" id="tracklist" aria-label="Tracks"></ol>
+        <p class="empty" id="library-empty" hidden>Nothing matches. Try another mood or clear the search.</p>
+      </section>
+
+      <section class="card queue-card" aria-labelledby="queue-title">
+        <div class="card-head">
+          <h2 id="queue-title">Up next</h2>
+          <button class="text-btn" id="queue-skip" type="button">Skip ahead</button>
+        </div>
+        <ol class="queue" id="queue"></ol>
+        <p class="queue-hint" id="queue-hint">Shuffle off · repeat off</p>
+      </section>
+    </aside>
+  </main>
+
+  <footer class="footer">
+    <p>Five original compositions, rendered on demand with <code>OfflineAudioContext</code> and played through one shared <code>AudioContext</code>. No samples, files, or trackers.</p>
+    <p class="footer-links"><a href="#top">Back to top</a><span aria-hidden="true">·</span><a href="https://github.com/MuhammadAwais047/music-player" rel="noopener">Source</a></p>
+  </footer>
+
+  <noscript><p class="noscript">Cadence needs JavaScript and the Web Audio API to synthesise its music.</p></noscript>
+
+  <script src="app.js"></script>
+</body>
+</html>
